@@ -1,28 +1,24 @@
 """
 Connected Campus chat server (FastAPI + WebSockets):
 
-Adapted from Activity 08. The key difference:
-  * Activity 08 BROADCAST every message to every connected client
-  * Here each client connects as ONE user (/ws/{user_id}) and the server ROUTES
-    each message only to the user it is addressed to
+Adapted from Activity 08 with difference:
+  * Each client connects as ONE user (/ws/{user_id}) & server ROUTES each message only to the user it's addressed to
 
 Wire format (every frame is JSON text):
   client -> server : {"type": "message", "to": "u2", "payload": {...}}
   server -> client : {"type": "message", "from": "u1", "payload": {...}}
   server -> client : {"type": "error", "detail": "..."}      (only for bad frames)
 
-The server doesn't look at type/payload, so later features (connection
-requests, location-sharing updates) can reuse the same route with no server changes
+Server doesn't look at type/payload, so later features (connection requests, location-sharing updates) can reuse same route with no server changes
 
-Midterm Scope: there is no login. User id in the URL is trusted
-The final project will replace that with token-based auth (see proposal, Future Work)
+Midterm Scope: no login, user id in URL is trusted
+Final project will replace that with token-based auth
 """
 
 import json
 from collections import defaultdict, deque
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List
 
 app = FastAPI()
 
